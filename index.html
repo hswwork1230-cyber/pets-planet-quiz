@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毛孩星球 - 專屬守護星測驗</title>
+    <!-- 引入 Tailwind CSS (使用 CDN 方便 GitHub Pages 部署) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc; /* Slate 50 */
+            overflow-x: hidden;
+        }
+
+        /* 順暢的 CSS 動畫 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes float1 {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translateY(0) rotate(2deg); }
+            50% { transform: translateY(-10px) rotate(-2deg); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .animate-float-1 { animation: float1 4s ease-in-out infinite; }
+        .animate-float-2 { animation: float2 3.5s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .animate-spin-slow { animation: spin-slow 4s linear infinite; }
+
+        .hidden-view { display: none !important; }
+        
+        /* 產品卡片懸停效果 */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 隱藏滾動條但保持可以滾動 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="selection:bg-yellow-400 selection:text-slate-900 min-h-screen flex flex-col relative">
+
+    <!-- 宇宙背景點綴 (RWD) -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-64 h-64 md:w-96 md:h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-64 h-64 md:w-96 md:h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+        
+        <!-- 背景小星星 -->
+        <svg class="absolute top-10 left-[10%] w-4 h-4 md:w-6 md:h-6 text-yellow-200 animate-pulse-slow" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        <svg class="absolute top-40 right-[15%] w-3 h-3 md:w-4 md:h-4 text-blue-200 animate-pulse-slow" style="animation-delay: 0.7s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        <svg class="absolute bottom-32 left-[20%] w-4 h-4 md:w-5 md:h-5 text-pink-200 animate-pulse-slow" style="animation-delay: 0.3s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+    </div>
+
+    <!-- 內容主容器 -->
+    <div class="relative z-10 flex-grow flex items-center justify-center max-w-3xl mx-auto px-4 py-8 w-full min-h-screen">
+        
+        <!-- ==================== 1. 首頁 ==================== -->
+        <div id="view-intro" class="w-full text-center animate-fade-in-up">
+            <!-- 吉祥物插圖區 -->
+            <div class="flex justify-center items-end gap-2 md:gap-6 mb-8 h-48 md:h-64">
+                <!-- Looka 宇航員 -->
+                <img src="images/宇航員路卡.png" alt="Looka" class="animate-float-1 w-36 h-36 md:w-56 md:h-56 object-contain drop-shadow-2xl z-10" />
+                <!-- 彭彭 宇航員 -->
+                <img src="images/宇航員彭.png" alt="彭彭" class="animate-float-2 w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-2xl" />
+            </div>
+            
+            <h2 class="text-yellow-400 font-bold tracking-widest text-xs md:text-sm mb-3">毛 孩 星 球 P E T S  P L A N E T</h2>
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-5 leading-tight">
+                探索毛孩的宇宙靈魂！<br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
+                    專屬守護星測驗
+                </span>
+            </h1>
+            <p class="text-slate-300 mb-10 text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+                Looka 與彭彭邀請你一起觀測星象 🔭<br class="hidden md:block"/>
+                憑直覺回答 4 個問題，找出寶貝的專屬星球體質，<br class="hidden md:block"/>
+                領取最適合他的星際健康指南！
+            </p>
+            
+            <button onclick="startQuiz()" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-slate-900 bg-yellow-400 rounded-full overflow-hidden transition-transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(250,204,21,0.4)] w-full md:w-auto">
+                <span class="relative flex items-center justify-center gap-2 text-lg md:text-xl w-full">
+                    🚀 立即發射，開始測驗
+                </span>
+            </button>
+        </div>
+
+        <!-- ==================== 2. 問答區 ==================== -->
+        <div id="view-quiz" class="w-full hidden-view">
+            <!-- 進度條 -->
+            <div class="mb-8 max-w-xl mx-auto">
+                <div class="flex justify-between text-xs md:text-sm text-slate-400 mb-2 font-bold px-1">
+                    <span>地球</span>
+                    <span id="progress-text" class="text-yellow-400">問題 1 / 4</span>
+                    <span>守護星</span>
+                </div>
+                <div class="w-full bg-slate-700/50 rounded-full h-3 relative overflow-hidden backdrop-blur-sm">
+                    <div id="progress-bar" class="bg-gradient-to-r from-blue-400 via-indigo-400 to-yellow-400 h-3 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
+                    <div id="progress-icon" class="absolute top-[-4px] text-lg transition-all duration-500 ease-out" style="left: calc(0% - 12px);">🛸</div>
+                </div>
+            </div>
+
+            <!-- 題目卡片 -->
+            <div class="bg-slate-800/80 backdrop-blur-xl p-5 md:p-10 rounded-3xl shadow-2xl border border-slate-700/50 max-w-2xl mx-auto animate-fade-in">
+                <h3 id="question-text" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center text-white leading-relaxed">
+                    載入題目中...
+                </h3>
+                <div id="options-container" class="flex flex-col gap-3 md:gap-4">
+                    <!-- 選項將透過 JS 動態產生 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3. 載入動畫 ==================== -->
+        <div id="view-loading" class="w-full hidden-view flex-col items-center justify-center text-center">
+            <div class="relative w-32 h-32 md:w-40 md:h-40 mb-8 flex items-center justify-center mx-auto">
+                <div class="absolute inset-0 border-4 border-dashed border-yellow-400/50 rounded-full animate-spin-slow"></div>
+                <div class="absolute inset-2 border-4 border-solid border-blue-400/30 rounded-full animate-spin-slow" style="animation-direction: reverse; animation-duration: 3s;"></div>
+                <img src="images/宇航員路卡.png" alt="Loading" class="w-16 h-16 md:w-20 md:h-20 object-contain animate-pulse" />
+            </div>
+            <h3 class="text-2xl font-bold text-yellow-300 mb-3 tracking-widest">星象觀測中...</h3>
+            <p class="text-slate-400 text-sm md:text-base">Looka 與彭彭正在計算毛孩的宇宙頻率 🐾✨</p>
+        </div>
+
+        <!-- ==================== 4. 結果頁 ==================== -->
+        <div id="view-result" class="w-full hidden-view animate-fade-in-up max-w-2xl mx-auto">
+            <div id="result-gradient-border" class="p-[2px] md:p-[3px] rounded-3xl bg-gradient-to-br from-yellow-300 to-orange-500 mb-6 mt-4">
+                <div class="bg-slate-900 rounded-[22px] md:rounded-[20px] p-5 md:p-8 flex flex-col items-center">
+                    
+                    <!-- 結果標題區 -->
+                    <div class="text-center mb-6 w-full">
+                        <h4 class="text-yellow-400 font-bold mb-2 tracking-wider text-sm md:text-base">✨ 專屬守護星 ✨</h4>
+                        <h2 id="result-planet" class="text-3xl md:text-5xl font-extrabold text-white mb-3">星球名稱</h2>
+                        <h3 id="result-title" class="text-lg md:text-xl text-slate-300 font-medium">特質標題</h3>
+                    </div>
+
+                    <!-- 吉祥物與說明 -->
+                    <div class="flex flex-col sm:flex-row items-center gap-5 md:gap-6 bg-slate-800/60 p-5 md:p-6 rounded-2xl mb-8 border border-slate-700/50 w-full">
+                        <div class="flex-shrink-0 relative">
+                            <div class="absolute inset-0 bg-white/5 rounded-full blur-xl animate-pulse"></div>
+                            <img id="result-mascot-img" src="" alt="Mascot" class="w-28 h-28 md:w-32 md:h-32 object-contain relative z-10 drop-shadow-xl animate-float-1" />
+                        </div>
+                        <div class="text-center sm:text-left flex-grow">
+                            <p id="result-desc" class="text-slate-200 leading-relaxed mb-4 text-sm md:text-base">描述內容</p>
+                            <div class="bg-slate-900/80 p-3 md:p-4 rounded-xl border border-slate-700 relative">
+                                <div class="hidden sm:block absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-slate-900/80 border-l border-t border-slate-700 -rotate-45"></div>
+                                <div class="sm:hidden absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-slate-900/80 border-l border-t border-slate-700 rotate-45"></div>
+                                <p id="result-quote" class="text-yellow-200 text-sm font-bold italic tracking-wide">「對話」</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 產品推薦區塊 -->
+                    <div class="w-full mb-6">
+                        <h4 class="text-center text-lg md:text-xl font-bold text-white mb-5 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                            量身打造的星際補給
+                            <svg class="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                        </h4>
+                        <div id="result-products" class="grid grid-cols-1 gap-3 md:gap-4 w-full">
+                            <!-- 產品清單透過 JS 動態產生 -->
+                        </div>
+                    </div>
+
+                    <!-- 重新測驗按鈕 -->
+                    <button onclick="resetQuiz()" class="text-slate-400 hover:text-white underline text-sm py-2 transition-colors mt-2">
+                        ↺ 重新測驗
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 腳本邏輯 -->
+    <script>
+        // 【已修改為本地端路徑】 吉祥物圖片資源
+        const IMG_LOOKA = "images/宇航員路卡.png";
+        const IMG_PENGPENG = "images/宇航員彭.png";
+
+        // 測驗題目與選項
+        const questions = [
+            {
+                question: "辛苦上了一天班，打開家門的那一刻，毛孩的反應是？",
+                options: [
+                    { letter: 'A', text: "像飛彈一樣衝過來，狂舔狂蹭，尾巴快搖斷了！", type: 'A' },
+                    { letter: 'B', text: "優雅地走過來喵/汪一聲，蹭蹭腳就走開。", type: 'B' },
+                    { letter: 'C', text: "稍微抬頭看一眼，然後繼續睡他的大頭覺。", type: 'C' },
+                    { letter: 'D', text: "有點神經質跟在屁股後面，走到哪跟到哪。", type: 'D' }
+                ]
+            },
+            {
+                question: "帶了新的玩具或零食回家，毛孩第一時間的表現是？",
+                options: [
+                    { letter: 'A', text: "直接撲上去又咬又玩，活力滿點完全停不下來！", type: 'A' },
+                    { letter: 'B', text: "先聞一聞、確認符合自己的品味才賞臉。", type: 'B' },
+                    { letter: 'C', text: "不管三七二十一，只要能吃進肚子的絕對秒殺！", type: 'C' },
+                    { letter: 'D', text: "有點警戒或猶豫，需要一直鼓勵才敢靠近。", type: 'D' }
+                ]
+            },
+            {
+                question: "毛孩平時在家最喜歡的放鬆姿勢或地點是？",
+                options: [
+                    { letter: 'A', text: "在客廳跑酷、跳上跳下，或在沙發挖洞。", type: 'A' },
+                    { letter: 'B', text: "待在窗邊看風景，或把自己理毛理得漂漂亮亮。", type: 'B' },
+                    { letter: 'C', text: "懶洋洋地趴在冰涼的地板上，或飯碗旁邊。", type: 'C' },
+                    { letter: 'D', text: "躲在紙箱裡、床底，或緊緊貼著你。", type: 'D' }
+                ]
+            },
+            {
+                question: "如果毛孩會說話，你覺得他最常對你說的一句話是？",
+                options: [
+                    { letter: 'A', text: "「快點！我們去玩！丟球球！衝啊！」", type: 'A' },
+                    { letter: 'B', text: "「我很美吧？還不快來伺候本喵/本大爺？」", type: 'B' },
+                    { letter: 'C', text: "「那個...請問放飯時間到了嗎？我餓了。」", type: 'C' },
+                    { letter: 'D', text: "「主子你不要走～我想要你一直陪著我 QQ」", type: 'D' }
+                ]
+            }
+        ];
+
+        // 【已修改為本地端路徑】 測驗結果與產品綁定資料
+        const resultsData = {
+            'A': {
+                planet: "土星 / 火星", 
+                title: "活力爆棚的火象毛孩🔥",
+                desc: "像火象星座一樣熱情奔放！他們的電力永遠用不完，最喜歡跑跳蹦，是家裡的開心果。但長期的跑酷對關節負擔不小，充沛的體力也需要照顧心血管喔！",
+                mascot: IMG_LOOKA, 
+                mascotName: "Looka",
+                mascotQuote: "跟我一樣愛玩耶！汪！記得要好好保護關節才能一直玩丟球球喔！",
+                colorClass: "from-orange-400 to-red-600",
+                btnClass: "bg-gradient-to-r from-orange-500 to-red-500",
+                products: [
+                    { name: "《土星》關節行動力強化保健粉", tag: "守護靈活", link: "https://www.pets-planet.com.tw/product/detail/1632778", imgUrl: "images/土星.png" },
+                    { name: "《火星》心血管養護保健粉", tag: "滿滿動能", link: "https://www.pets-planet.com.tw/product/detail/1632771", imgUrl: "images/火星.png" }
+                ]
+            },
+            'B': {
+                planet: "金星", 
+                title: "優雅自戀的風象毛孩✨",
+                desc: "自帶仙氣！他們非常注重自己的外表與清潔，傲嬌又迷人。愛美的他們，皮膚與毛髮的狀態就是命根子，需要好好養護才能維持高顏值。",
+                mascot: IMG_PENGPENG, 
+                mascotName: "彭彭",
+                mascotQuote: "哼，算你有眼光。本喵的絕世美貌可是需要好好保養的。",
+                colorClass: "from-yellow-300 to-yellow-500",
+                btnClass: "bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900",
+                products: [
+                    { name: "《金星》皮膚毛髮亮澤保健粉", tag: "自帶星芒", link: "https://www.pets-planet.com.tw/product/detail/1632777", imgUrl: "images/金星.png" }
+                ]
+            },
+            'C': {
+                planet: "木星", 
+                title: "慵懶吃貨的土象毛孩🌍",
+                desc: "踏實享受生活！「吃與睡」是最高指導原則。脾氣好、隨遇而安，但旺盛的食慾需要強健的腸胃來支撐，小心吃太快消化不良喔！",
+                mascot: IMG_PENGPENG, 
+                mascotName: "彭彭",
+                mascotQuote: "呼嚕嚕... 有好吃的我都喜歡，但要有好腸胃才能吃更多喔！",
+                colorClass: "from-green-400 to-emerald-600",
+                btnClass: "bg-gradient-to-r from-green-500 to-emerald-600",
+                products: [
+                    { name: "《木星》腸胃調節保健粉", tag: "快樂吃貨", link: "https://www.pets-planet.com.tw/product/detail/1720533", imgUrl: "images/木星.png" },
+                    { name: "《地球》綜合營養粉", tag: "基礎守護", link: "https://www.pets-planet.com.tw/product/detail/1632773", imgUrl: "images/地球.png" }
+                ]
+            },
+            'D': {
+                planet: "水星 / 海王星", 
+                title: "敏感細膩的水象毛孩💧",
+                desc: "情感豐富非常貼心，但也因為心思細膩，容易受環境變化驚嚇。長期的壓力可能影響情緒或引發泌尿問題，需要主人滿滿的安撫！",
+                mascot: IMG_LOOKA, 
+                mascotName: "Looka",
+                mascotQuote: "嗚汪... 有時候會有點怕怕的，需要主人的抱抱和放鬆補給！",
+                colorClass: "from-blue-400 to-indigo-600",
+                btnClass: "bg-gradient-to-r from-blue-500 to-indigo-500",
+                products: [
+                    { name: "《水星》情緒紓緩保健粉", tag: "滿滿安全感", link: "https://www.pets-planet.com.tw/product/detail/1632775", imgUrl: "images/水星.png" },
+                    { name: "《海王星》腎臟泌尿保健粉", tag: "順暢無憂", link: "https://www.pets-planet.com.tw/product/detail/1720531", imgUrl: "images/海王星.png" }
+                ]
+            }
+        };
+
+        // 狀態變數
+        let currentQ = 0;
+        let scores = { A: 0, B: 0, C: 0, D: 0 };
+
+        // DOM 元素快取
+        const viewIntro = document.getElementById('view-intro');
+        const viewQuiz = document.getElementById('view-quiz');
+        const viewLoading = document.getElementById('view-loading');
+        const viewResult = document.getElementById('view-result');
+
+        // 切換畫面工具函數
+        function showView(viewEl) {
+            [viewIntro, viewQuiz, viewLoading, viewResult].forEach(el => el.classList.add('hidden-view'));
+            viewEl.classList.remove('hidden-view');
+            // 重新觸發淡入動畫
+            viewEl.classList.remove('animate-fade-in');
+            void viewEl.offsetWidth; 
+            viewEl.classList.add('animate-fade-in');
+        }
+
+        // 1. 點擊開始
+        function startQuiz() {
+            showView(viewQuiz);
+            renderQuestion();
+        }
+
+        // 2. 渲染當前題目
+        function renderQuestion() {
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.question;
+            
+            // 更新進度條
+            const progressPercent = (currentQ / questions.length) * 100;
+            document.getElementById('progress-text').innerText = `問題 ${currentQ + 1} / ${questions.length}`;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-icon').style.left = `calc(${progressPercent}% - 12px)`;
+
+            // 產生選項
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "text-left w-full p-4 md:p-5 rounded-2xl border border-slate-600 bg-slate-700/40 hover:bg-slate-600/80 hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200 group flex items-start gap-4";
+                btn.onclick = () => handleAnswer(opt.type);
+                btn.innerHTML = `
+                    <span class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-900 border border-slate-500 text-slate-300 flex items-center justify-center font-bold text-sm md:text-base group-hover:bg-yellow-400 group-hover:text-slate-900 group-hover:border-yellow-400 transition-colors shadow-inner">
+                        ${opt.letter}
+                    </span>
+                    <span class="text-base md:text-lg text-slate-200 group-hover:text-white pt-1 md:pt-1.5 font-medium leading-snug">
+                        ${opt.text}
+                    </span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // 3. 處理作答邏輯
+        function handleAnswer(type) {
+            scores[type]++;
+            if (currentQ < questions.length - 1) {
+                currentQ++;
+                renderQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        // 4. 計算結果與過場
+        function calculateResult() {
+            showView(viewLoading);
+
+            // 找出最高分，若平手則預設優先順序 A > B > C > D
+            let highestType = 'A';
+            let max = -1;
+            for (const [type, score] of Object.entries(scores)) {
+                if (score > max) { 
+                    max = score; 
+                    highestType = type; 
+                }
+            }
+
+            // 模擬運算延遲
+            setTimeout(() => {
+                renderResult(highestType);
+            }, 2500);
+        }
+
+        // 5. 顯示最終結果與產品圖連結
+        function renderResult(type) {
+            const data = resultsData[type];
+            
+            // 更新邊框漸層色
+            const border = document.getElementById('result-gradient-border');
+            border.className = `p-[2px] md:p-[3px] rounded-3xl bg-gradient-to-br ${data.colorClass} mb-6 mt-4 w-full`;
+            
+            // 更新文字
+            document.getElementById('result-planet').innerText = data.planet;
+            document.getElementById('result-title').innerText = data.title;
+            document.getElementById('result-desc').innerText = data.desc;
+            
+            // 更新吉祥物圖片與對話
+            const mascotImg = document.getElementById('result-mascot-img');
+            mascotImg.src = data.mascot;
+            
+            document.getElementById('result-quote').innerHTML = `${data.mascotName} 說：<br/><span class="font-normal">「${data.mascotQuote}」</span>`;
+
+            // 動態生成帶有「產品圖」和超連結的卡片按鈕
+            const prodContainer = document.getElementById('result-products');
+            prodContainer.innerHTML = '';
+            data.products.forEach((prod) => {
+                // 文字顏色根據按鈕背景調整（金星背景較亮，使用深色字）
+                const textColor = type === 'B' ? 'text-slate-900' : 'text-white';
+                const tagBorder = type === 'B' ? 'border-slate-800/50' : 'border-white/50';
+                
+                prodContainer.innerHTML += `
+                    <a href="${prod.link}" target="_blank" rel="noopener noreferrer" 
+                       class="product-card flex items-center justify-between p-3 md:p-4 rounded-xl ${data.btnClass} shadow-lg w-full group overflow-hidden">
+                        
+                        <div class="flex items-center gap-3 md:gap-5 flex-1 min-w-0">
+                            <!-- 產品圖片 -->
+                            <div class="flex-shrink-0 w-14 h-14 md:w-20 md:h-20 bg-white/90 backdrop-blur-sm rounded-lg shadow-inner border border-white/50 flex items-center justify-center p-1 md:p-1.5 transition-transform group-hover:scale-105">
+                                <img src="${prod.imgUrl}" alt="${prod.name}" class="w-full h-full object-contain drop-shadow-md" />
+                            </div>
+                            
+                            <!-- 產品資訊 -->
+                            <div class="text-left flex-1 min-w-0 py-1">
+                                <span class="text-[10px] md:text-xs font-bold border ${tagBorder} rounded-full px-2 py-0.5 mb-1.5 inline-block ${textColor} bg-white/10">
+                                    ${prod.tag}
+                                </span>
+                                <p class="font-extrabold text-sm md:text-base leading-snug ${textColor} truncate whitespace-normal line-clamp-2">${prod.name}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 右側導購箭頭 -->
+                        <div class="flex-shrink-0 bg-white/20 rounded-full p-2 group-hover:bg-white/40 transition-colors ml-2 md:ml-4 ${textColor} shadow-sm">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </a>
+                `;
+            });
+
+            // 確保每次顯示結果頁時都在畫面最上方
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showView(viewResult);
+        }
+
+        // 6. 重置測驗
+        function resetQuiz() {
+            currentQ = 0;
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-icon').style.left = 'calc(0% - 12px)';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showView(viewIntro);
+        }
+    </script>
+</body>
+</html>
